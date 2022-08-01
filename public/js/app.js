@@ -19,6 +19,31 @@ class App {
     });
   }
 
+  //reciev the user from the form and load apiKey from the local storage, if apiKey doesnt exist, an a unauthorized message is reciev from the backend
+  addUser(user) {
+    document.getElementById("users").appendChild(this.createUserElement(user));
+
+    const dataToSend = { ...user, apiKey: localStorage.getItem("auth") };
+
+    this.request("POST", "user", dataToSend).then((response) => {
+      console.log(response);
+    });
+    this.users.push(user);
+  }
+
+  //delete method
+  deleteUser(id) {
+    const dataToSend = { id, apiKey: localStorage.getItem("auth") };
+    //first remove in the front-end
+    let index = this.users.map((user) => user.id).indexOf(id);
+    this.users.splice(index, 1);
+
+    //before delete in the database
+    this.request("DELETE", "user", dataToSend).then((response) => {
+      return true;
+    });
+  }
+
   //render new user element in the ul and delete user
   createUserElement(user) {
     let el = document.createElement("li");
