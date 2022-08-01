@@ -32,15 +32,14 @@ class App {
   }
 
   //delete method
-  deleteUser(id) {
-    const dataToSend = { id, apiKey: localStorage.getItem("auth") };
+  deleteUser(user) {
     //first remove in the front-end
-    let index = this.users.map((user) => user.id).indexOf(id);
+    let index = this.users.map((user) => user.id).indexOf(user.id);
     this.users.splice(index, 1);
 
     //before delete in the database
-    this.request("DELETE", "user", dataToSend).then((response) => {
-      return true;
+    this.request("DELETE", "user", user).then((response) => {
+      console.log(response);
     });
   }
 
@@ -56,7 +55,7 @@ class App {
       `;
     el.querySelector("a").addEventListener("click", (e) => {
       e.preventDefault();
-      this.deleteUser(id);
+      this.deleteUser(user);
       el.remove();
     });
 
