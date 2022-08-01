@@ -22,6 +22,53 @@ const db = mysql.createConnection({
 //load apiKey
 const API_KEY = process.env.API_KEY;
 
+//delete user route
+app.delete("/user", (req, res) => {
+  const { id, apiKey } = req.body;
+  if (String(apiKey) === String(API_KEY)) {
+    db.query(`DELETE FROM users WHERE id = ${id}`, (error, result) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).json({ status: "ERROR", error });
+      }
+
+      return res.status(200).json({ status: "SUCESS" });
+    });
+  }
+  return res.status(401).json({ status: "UNAUTORIZED" });
+});
+
+//add new user route
+app.post("/user", (req, res) => {
+  const { username, password, apiKey } = req.body;
+  if (String(apiKey) === String(API_KEY)) {
+    db.query(
+      ` INSERT INTO users (username, password) VALUES ('${username}', '${password}')`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          return res.status(500).json({ status: "ERROR", error });
+        }
+
+        return res.status(201).json({ status: "SUCESS" });
+      }
+    );
+  }
+  return res.status(401).json({ status: "UNAUTORIZED" });
+});
+
+//route for get users from the database
+app.get("/users", (req, res) => {
+  db.query("SELECT * from users", (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).json({ status: "ERROR" });
+    }
+
+    return res.status(200).json(result);
+  });
+});
+
 //create route to get new user and save it on the database
 app.post("/auth", (req, res) => {
   const { username, password } = req.body;
